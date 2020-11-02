@@ -24,9 +24,9 @@ class Screenshots:
     #function for doing log in
     def login(self,email,password, sign_mail, sign_buttom):
         if sign_mail == None:
-            sign_mail = '/html/body/div[2]/div/div/div/div/div/div[1]/div[2]/div[2]/a'
+            sign_mail = '/html/body/span/div/header/div[1]/div[3]/div[2]/div/a[1]'
         if sign_buttom == None:
-            sign_buttom = '/html/body/div[2]/div/div/div/div/div/div[2]/div[2]/form/fieldset/div[3]/button'
+            sign_buttom = '/html/body/span/div/header/div[1]/div[3]/div[2]/div/a[1]'
             print("none")
         try:            #typing email and password and then clicking to Log In
             self.driver.find_element_by_id('login_or_email').send_keys(email)
@@ -95,16 +95,16 @@ class Screenshots:
     #checks percentage and goes back to 0% if is not already
     def check_percentageIsZero(self):
         #read actual percentage, page(pagina) and final book page (paginafinal) Sorry for not translating the objects name
-        percentage_read = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[3]').text.replace(r'% lido',''))
-        pagina = int((self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PÁGINA", '')).split(" DE ")[0])
-        paginafinal = int((self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PÁGINA", '')).split(" DE ")[1])
+        percentage_read = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[3]').text.replace(r'% read',''))
+        pagina = int((self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PAGE", '')).split(" OF ")[0])
+        paginafinal = int((self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PAGE", '')).split(" OF ")[1])
         print("%: ",percentage_read,". pag: ", pagina) #prints the status of the reading
         #goes back to 0% or 1st page
         while percentage_read != 0 or pagina != 1:
             try:
                 self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/a[1]/span[2]').click()
-                percentage_read = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[3]').text.replace(r'% lido',''))
-                pagina = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PÁGINA", '').split(" DE ")[0])
+                percentage_read = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[3]').text.replace(r'% read',''))
+                pagina = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PAGE", '').split(" OF ")[0])
                 if pagina == 1:
                     return [percentage_read, pagina, paginafinal]
             except Exception as e:
@@ -133,8 +133,8 @@ class Screenshots:
             pass
     
     def update_percentage(self):        #function to update the percentage and page progress
-        percentage_read = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[3]').text.replace(r'% lido',''))
-        pagina = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PÁGINA", '').split(" DE ")[0])
+        percentage_read = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[3]').text.replace(r'% read',''))
+        pagina = int(self.driver.find_element_by_xpath('/html/body/div[2]/div/div[4]/div/span/div/nav/div[2]/div[2]/div').text.replace("PAGE", '').split(" OF ")[0])
         return percentage_read, pagina
     #########################################################################################
     def screenshot(self, read_url, book_title, email, password, book_id):
@@ -142,7 +142,7 @@ class Screenshots:
         #set chromedriver options and load it
         chrome_options = Options()
         chrome_options.add_argument("user-data-dir=selenium") 
-        chrome_options.add_argument("--start-fullscreen")
+        # chrome_options.add_argument("--start-fullscreen")
         self.driver = webdriver.Chrome(chrome_options=chrome_options)
         self.wait = WebDriverWait(self.driver,100)
         options = {
@@ -154,16 +154,17 @@ class Screenshots:
         #go to book url
         self.driver.get(read_url)
         sleep(5)
-        self.check_language() #check if its in Portugues and if not, change
+        # self.check_language() #check if its in Portugues and if not, change
         self.login_check(email,password)    #Check if its logged and if not, login
 
         #click the 'read this book now' buttom
         sleep(2)
         #xpath above for debuging without premium account
         #self.driver.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[1]/div[1]/div[3]/div/div/section/div/div/section/a[2]').click()
-        self.driver.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[1]/div[1]/div[3]/div/div/section/div/div/section/a').click()
+        # self.driver.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[1]/div[1]/div[3]/div/div/section/div/div/section/a').click()
+        self.driver.find_element_by_xpath('/html/body/div[2]/div/div[2]/div[1]/div[1]/div[2]/div/div/section/div/div/section/a').click()
         print("Read page done")
-        sleep(7)
+        sleep(20)
         percentage_read, pagina, paginafinal = self.check_percentageIsZero()    #checks the percentage read and if != 0
         try:                                                                    #goes back to the start of the book
             sleep(2)
@@ -277,7 +278,7 @@ class PDF_Gen(FPDF):
             self.pdf.output(book_title + '_IMG.pdf', 'F')       #saves pdf_IMG file
             print("PDF '{book_title}' saved in script's root!".format(book_title='{title}(...)'.format(title=book_title[:20])))
         print("Deleting %i temporary image page files from root."% (len(lista)+1))
-        shutil.rmtree(img_path)     #delestes book_id directory
+        # shutil.rmtree(img_path)     #delestes book_id directory
 
 
     def main(self,book_title, book_id):
